@@ -2,7 +2,14 @@ import axios from 'axios';
 import { store } from '../store/store';
 import { logout } from '../store/slices/authSlice';
 
-axios.interceptors.request.use(
+const API_URL = import.meta.env.VITE_API_URL;
+
+const axiosInstance = axios.create({
+  baseURL: API_URL
+});
+
+// Request interceptor
+axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -15,7 +22,8 @@ axios.interceptors.request.use(
   }
 );
 
-axios.interceptors.response.use(
+// Response interceptor
+axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
@@ -25,3 +33,5 @@ axios.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export default axiosInstance;

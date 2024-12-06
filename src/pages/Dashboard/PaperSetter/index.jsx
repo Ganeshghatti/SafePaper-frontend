@@ -1,24 +1,31 @@
-import React from 'react';
-import { Box, Typography, Grid, Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Alert, CircularProgress } from '@mui/material';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import HistoryIcon from '@mui/icons-material/History';
+import CreateQuestion from './CreateQuestion';
+import { questionService } from '../../../services/questionService';
 
 export default function PaperSetterDashboard() {
-  const cards = [
-    {
-      title: 'Create New Paper',
-      icon: <AssignmentIcon sx={{ fontSize: 40 }} />,
-      description: 'Create a new question paper',
-      path: '/create-paper'
-    },
-    {
-      title: 'Previous Papers',
-      icon: <HistoryIcon sx={{ fontSize: 40 }} />,
-      description: 'View and manage previous papers',
-      path: '/previous-papers'
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [guardians, setGuardians] = useState([]);
+  const [error, setError] = useState(null);
+  const { getGuardians } = questionService;
+
+  const fetchGuardians = async () => {
+    try {
+      const response = await getGuardians();
+      if (response?.data) {
+        setGuardians(response.data);
+        setHasSubmitted(response.hasSetQuestions || false);
+      }
+    } catch (error) {
+      console.error("Error fetching guardians:", error);
+      setError(error.message || "Failed to fetch guardians");
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchGuardians();
+  }, []);
 
   return (
     <DashboardLayout title="Paper Setter Dashboard">
@@ -27,32 +34,26 @@ export default function PaperSetterDashboard() {
           Welcome, Paper Setter
         </Typography>
 
-        <Grid container spacing={3}>
-          {cards.map((card) => (
-            <Grid item xs={12} sm={6} md={4} key={card.title}>
-              <Paper
-                sx={{
-                  p: 3,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    bgcolor: 'action.hover'
-                  },
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 2
-                }}
-              >
-                {card.icon}
-                <Typography variant="h6">{card.title}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {card.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {hasSubmitted ? (
+          <Alert severity="info">
+            You have already submitted your questions. Thank you for your contribution!
+          </Alert>
+        ) : guardians && guardians.length > 0 ? (
+          <CreateQuestion 
+            onSuccess={() => setHasSubmitted(true)} 
+            guardians={guardians}
+          />
+        ) : (
+          <Alert severity="warning">
+            No guardians available. Please try again later.
+          </Alert>
+        )}
       </Box>
     </DashboardLayout>
   );

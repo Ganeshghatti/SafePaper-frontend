@@ -5,9 +5,9 @@ export default function PrivateRoute({ children, allowedRoles = [] }) {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/" state={{ from: location }} replace />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/" state={{ from: location }} replace />;
+  // }
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
     return <Navigate to="/unauthorized" replace />;

@@ -29,6 +29,7 @@ const authSlice = createSlice({
       state.error = action.payload;
       state.isAuthenticated = false;
       state.user = null;
+      state.token = null;
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     },
