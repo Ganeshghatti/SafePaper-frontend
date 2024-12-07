@@ -32,5 +32,18 @@ export const examService = {
     } finally {
       store.dispatch(setFullScreenLoading(false));
     }
+  },
+
+  async getExamCenterDetails() {
+    try {
+      store.dispatch(setFullScreenLoading(true));
+      const response = await axiosInstance.get('/exams/exam-center-details');
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching exam center details:', error);
+      throw error;
+    } finally {
+      store.dispatch(setFullScreenLoading(false));
+    }
   }
 }; 
