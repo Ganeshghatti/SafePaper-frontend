@@ -1,58 +1,128 @@
-import React from 'react';
-import { Box, Typography, Grid, Paper } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Paper,
+  TextField,
+  Button,
+  Alert,
+  CircularProgress
+} from '@mui/material';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
-import PersonIcon from '@mui/icons-material/Person';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+import { examService } from '../../../services/examService';
 
 export default function GuardianDashboard() {
-  const cards = [
-    {
-      title: 'Student Profile',
-      icon: <PersonIcon sx={{ fontSize: 40 }} />,
-      description: 'View and manage student information',
-      path: '/student-profile'
-    },
-    {
-      title: 'Exam Results',
-      icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
-      description: 'View exam results and progress',
-      path: '/exam-results'
+  const [loading, setLoading] = useState(true);
+  const [examStatus, setExamStatus] = useState(null);
+  const [examDetails, setExamDetails] = useState(null);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [key, setKey] = useState('');
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    checkKeyStatus();
+  }, []);
+
+  const checkKeyStatus = async () => {
+    try {
+      setLoading(true);
+      const response = await examService.checkKeyStatus();
+      console.log(response);
+      setExamStatus(response.status);
+      setHasSubmitted(response.hasSubmitted);
+      setExamDetails(response.examDetails);
+    } catch (err) {
+      setError(err.message || 'Failed to check key status');
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const handleSubmitKey = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(false);
+
+    try {
+      console.log(key)
+      const response = await examService.submitGuardianKey({ key });
+      if (response.success) {
+        setSuccess(true);
+        setKey('');
+        checkKeyStatus();
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to submit key');
+    }
+  };
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <CircularProgress />
+        </Box>
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <DashboardLayout title="Guardian Dashboard">
+    <DashboardLayout>
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 4 }}>
-          Welcome, Guardian
+        <Typography variant="h4" gutterBottom>
+          Guardian Dashboard
         </Typography>
 
-        <Grid container spacing={3}>
-          {cards.map((card) => (
-            <Grid item xs={12} sm={6} md={4} key={card.title}>
-              <Paper
-                sx={{
-                  p: 3,
-                  textAlign: 'center',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    bgcolor: 'action.hover'
-                  },
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: 2
-                }}
-              >
-                {card.icon}
-                <Typography variant="h6">{card.title}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {card.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+        {examDetails&& (
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>Current Exam</Typography>
+            <Typography>Date: {new Date(examDetails.date).toLocaleDateString()}</Typography>
+            <Typography>Time: {examDetails.startTime} - {examDetails.endTime}</Typography>
+            <Typography>Status: {examDetails.status}</Typography>
+          </Paper>
+        )}
+
+        {examDetails && !hasSubmitted && (
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>Submit Key</Typography>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
+            {success && (
+              <Alert severity="success" sx={{ mb: 2 }}>
+                Key submitted successfully
+              </Alert>
+            )}
+            <form onSubmit={handleSubmitKey}>
+              <TextField
+                fullWidth
+                label="Secret Key"
+                value={key}
+                onChange={(e) => setKey(e.target.value)}
+                required
+                sx={{ mb: 2 }}
+              />
+              <Button type="submit" variant="contained">
+                Submit Key
+              </Button>
+            </form>
+          </Paper>
+        )}
+
+        {hasSubmitted && (
+          <Alert severity="success">
+            You have already submitted your key for this exam.
+          </Alert>
+        )}
+
+        {!examDetails && (
+          <Alert severity="info">
+            There are no active exams at the moment.
+          </Alert>
+        )}
       </Box>
     </DashboardLayout>
   );
