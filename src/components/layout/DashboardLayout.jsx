@@ -116,7 +116,7 @@ export default function DashboardLayout({ children, title }) {
         </Toolbar>
       </AppBar>
 
-      <Box component="main" className="flex-1 p-6 mt-16 bg-background">
+      <Box component="main" className="flex-1 p-4 mt-16 bg-background">
         {children}
       </Box>
     </Box>

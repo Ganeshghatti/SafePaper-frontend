@@ -165,7 +165,7 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
   }
 
   return (
-    <Paper className="p-4 md:p-8 bg-secondary/10">
+    <Paper className="p-4 md:p-8 bg-secondary/10 mb-4">
       <div className="mb-8">
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((label) => (
@@ -190,7 +190,7 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
                 variant="h6"
                 className="font-semibold text-primary flex items-center gap-2"
               >
-                <QuestionMarkIcon className="text-accent" />
+                <QuestionMarkIcon className="text-accent"/>
                 Create Questions
               </Typography>
               <Tooltip title="Add at least 3 questions with 4 options each">
@@ -201,13 +201,13 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
             {questions.map((q, index) => (
               <Accordion
                 key={index}
-                className="border border-secondary hover:border-primary/30 transition-all duration-200"
+                className="border-secondary hover:border-primary/30 transition-all duration-200"
               >
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
                   className="bg-secondary/5"
                 >
-                  <div className="flex items-center justify-between w-full pr-4">
+                  <div className="flex md:items-center justify-between w-full pr-4 flex-col md:flex-row">
                     <Typography className="font-medium flex items-center gap-2">
                       <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm md:text-base">
                         {index + 1}

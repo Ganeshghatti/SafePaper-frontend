@@ -81,13 +81,19 @@ export default function GuardianDashboard() {
 
   return (
     <DashboardLayout>
-      <Box className="space-y-8">
+      <Box className="space-y-8 w-full">
         {/* Hero Section */}
         <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary/20 via-accent/10 to-primary/20 p-8">
           <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="relative z-10">
             <div className="flex items-center gap-3 mb-4">
-              <SecurityIcon className="text-accent" sx={{ fontSize: 40 }} />
+              <SecurityIcon
+                className="text-accent"
+                sx={{
+                  fontSize: { xs: 32, md: 40 },
+                  display: { xs: "none", md: "block" },
+                }}
+              />
               <Typography variant="h4" className="gradient-text font-bold">
                 Guardian Dashboard
               </Typography>
