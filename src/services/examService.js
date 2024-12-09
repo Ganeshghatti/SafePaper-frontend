@@ -45,5 +45,14 @@ export const examService = {
     } finally {
       store.dispatch(setFullScreenLoading(false));
     }
+  },
+
+  async requestPaper() {
+    try {
+      const response = await axiosInstance.post('/exams/request-paper');
+      return response.data;
+    } catch (error) {
+      throw error.response?.data || error;
+    }
   }
 }; 

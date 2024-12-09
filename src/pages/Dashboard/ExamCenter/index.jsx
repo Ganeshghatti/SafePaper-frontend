@@ -12,7 +12,8 @@ import {
   Radio,
   RadioGroup,
   FormControlLabel,
-  FormControl
+  FormControl,
+  Button
 } from '@mui/material';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
 import { examService } from '../../../services/examService';
@@ -21,10 +22,53 @@ export default function ExamCenterDashboard() {
   const [loading, setLoading] = useState(true);
   const [examDetails, setExamDetails] = useState(null);
   const [error, setError] = useState(null);
+  const [canRequestPaper, setCanRequestPaper] = useState(false);
+  const [requesting, setRequesting] = useState(false);
+  const [timeLeft, setTimeLeft] = useState('');
 
   useEffect(() => {
     checkExamDetails();
+    const interval = setInterval(checkExamTime, 1000); // Check every second for smoother countdown
+    return () => clearInterval(interval);
   }, []);
+
+  const checkExamTime = () => {
+    if (!examDetails) return;
+    
+    const now = new Date();
+    const examDate = new Date(examDetails.date);
+    const [hours, minutes] = examDetails.startTime.split(':');
+    examDate.setHours(parseInt(hours), parseInt(minutes));
+    const timeDiffMinutes = (examDate - now) / (1000 * 60);
+
+    const canRequest = timeDiffMinutes <= 5 && timeDiffMinutes > 0;
+    setCanRequestPaper(canRequest);
+
+    // Calculate time left to request
+    if (timeDiffMinutes > 5) {
+      const minutesToRequest = Math.floor(timeDiffMinutes - 5);
+      const secondsToRequest = Math.floor(((timeDiffMinutes - 5) % 1) * 60);
+      setTimeLeft(`${minutesToRequest}m ${secondsToRequest}s until paper can be requested`);
+    } else if (timeDiffMinutes > 0) {
+      const secondsLeft = Math.floor(timeDiffMinutes * 60);
+      setTimeLeft(`${secondsLeft}s remaining for exam`);
+    } else {
+      setTimeLeft('Paper request time has expired');
+    }
+  };
+
+  const handleRequestPaper = async () => {
+    try {
+      setRequesting(true);
+      const response = await examService.requestPaper();
+      setExamDetails(response.examDetails);
+      showToast.success('Paper retrieved successfully');
+    } catch (err) {
+      showToast.error(err.message || 'Failed to retrieve paper');
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   const checkExamDetails = async () => {
     try {
@@ -62,6 +106,31 @@ export default function ExamCenterDashboard() {
           </Alert>
         )}
 
+        {examDetails && !examDetails.hasDecodedQuestions && (
+          <Alert 
+            severity="info" 
+            sx={{ 
+              mb: 2,
+              '& .MuiAlert-message': {
+                width: '100%'
+              }
+            }}
+          >
+            <Box>
+              <Typography>Paper can only be requested within 5 minutes before exam start time</Typography>
+              <Typography 
+                sx={{ 
+                  mt: 1,
+                  fontWeight: 'bold',
+                  color: canRequestPaper ? 'success.main' : 'text.secondary'
+                }}
+              >
+                {timeLeft}
+              </Typography>
+            </Box>
+          </Alert>
+        )}
+
         {examDetails ? (
           <>
             <Paper sx={{ p: 3, mb: 3 }}>
@@ -69,9 +138,18 @@ export default function ExamCenterDashboard() {
               <Typography>Date: {new Date(examDetails.date).toLocaleDateString()}</Typography>
               <Typography>Time: {examDetails.startTime} - {examDetails.endTime}</Typography>
               <Typography>Status: {examDetails.status}</Typography>
-              <Typography>
-                Questions Status: {examDetails.hasDecodedQuestions ? 'Ready' : 'Waiting for guardian keys'}
-              </Typography>
+              
+              {canRequestPaper && !examDetails.hasDecodedQuestions && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleRequestPaper}
+                  disabled={requesting}
+                  sx={{ mt: 2 }}
+                >
+                  {requesting ? <CircularProgress size={24} /> : 'Request Paper'}
+                </Button>
+              )}
             </Paper>
 
             {examDetails.questions && (
