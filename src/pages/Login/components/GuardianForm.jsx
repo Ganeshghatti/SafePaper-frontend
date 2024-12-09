@@ -20,7 +20,7 @@ export default function GuardianForm() {
     e.preventDefault();
     try {
       dispatch(loginStart());
-      const response = await login(formData);
+      const response = await login(formData, { role: "guardian" });
       dispatch(loginSuccess(response));
       navigate('/app/guardian/dashboard');
     } catch (err) {

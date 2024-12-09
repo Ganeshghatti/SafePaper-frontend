@@ -20,7 +20,7 @@ export default function ExamCenterForm() {
     e.preventDefault();
     try {
       dispatch(loginStart());
-      const response = await login(formData);
+      const response = await login(formData, { role: "exam-center" });
       dispatch(loginSuccess(response));
       navigate('/app/exam-center/dashboard');
     } catch (err) {

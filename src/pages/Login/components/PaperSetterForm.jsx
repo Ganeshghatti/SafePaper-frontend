@@ -20,7 +20,8 @@ export default function PaperSetterForm() {
     e.preventDefault();
     try {
       dispatch(loginStart());
-      const response = await login(formData);
+      const response = await login(formData, { role: 'paper-setter' });
+      console.log(response)
       dispatch(loginSuccess(response));
       navigate('/app/paper-setter/dashboard');
     } catch (err) {

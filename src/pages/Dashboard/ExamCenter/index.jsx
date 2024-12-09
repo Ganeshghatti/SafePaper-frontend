@@ -7,14 +7,16 @@ import {
   CircularProgress,
   List,
   ListItem,
-  ListItemText,
-  Divider,
   Radio,
   RadioGroup,
   FormControlLabel,
   FormControl,
-  Button
+  Button,
+  Chip
 } from '@mui/material';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SchoolIcon from '@mui/icons-material/School';
+import QuizIcon from '@mui/icons-material/Quiz';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
 import { examService } from '../../../services/examService';
 
@@ -95,97 +97,127 @@ export default function ExamCenterDashboard() {
 
   return (
     <DashboardLayout>
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Exam Center Dashboard
-        </Typography>
+      <Box className="p-6 space-y-8">
+        <div className="flex items-center justify-between mb-8">
+          <Typography variant="h4" className="gradient-text font-bold">
+            Exam Center Dashboard
+          </Typography>
+          <SchoolIcon className="text-primary" sx={{ fontSize: 40 }} />
+        </div>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" className="mb-4">
             {error}
           </Alert>
         )}
 
         {examDetails && !examDetails.hasDecodedQuestions && (
-          <Alert 
-            severity="info" 
-            sx={{ 
-              mb: 2,
-              '& .MuiAlert-message': {
-                width: '100%'
-              }
-            }}
-          >
-            <Box>
-              <Typography>Paper can only be requested within 5 minutes before exam start time</Typography>
-              <Typography 
-                sx={{ 
-                  mt: 1,
-                  fontWeight: 'bold',
-                  color: canRequestPaper ? 'success.main' : 'text.secondary'
-                }}
-              >
-                {timeLeft}
+          <Paper className="p-6 hover-card bg-secondary">
+            <div className="flex items-center space-x-2 mb-4">
+              <AccessTimeIcon className="text-accent" />
+              <Typography variant="h6" className="font-semibold text-primary">
+                Time Status
               </Typography>
-            </Box>
-          </Alert>
+            </div>
+            
+            <Alert 
+              severity="info"
+              className="bg-secondary/20 border border-primary/20"
+            >
+              <div className="space-y-2">
+                <Typography>Paper can only be requested within 5 minutes before exam start time</Typography>
+                <Typography 
+                  className={`font-bold ${canRequestPaper ? 'text-green-600' : 'text-gray-600'}`}
+                >
+                  {timeLeft}
+                </Typography>
+              </div>
+            </Alert>
+          </Paper>
         )}
 
-        {examDetails ? (
-          <>
-            <Paper sx={{ p: 3, mb: 3 }}>
-              <Typography variant="h6" gutterBottom>Current Exam</Typography>
-              <Typography>Date: {new Date(examDetails.date).toLocaleDateString()}</Typography>
-              <Typography>Time: {examDetails.startTime} - {examDetails.endTime}</Typography>
-              <Typography>Status: {examDetails.status}</Typography>
-              
-              {canRequestPaper && !examDetails.hasDecodedQuestions && (
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleRequestPaper}
-                  disabled={requesting}
-                  sx={{ mt: 2 }}
-                >
-                  {requesting ? <CircularProgress size={24} /> : 'Request Paper'}
-                </Button>
-              )}
-            </Paper>
+        {examDetails && (
+          <Paper className="p-6 hover-card bg-secondary">
+            <div className="flex items-center justify-between mb-4">
+              <Typography variant="h6" className="font-semibold text-primary">
+                Current Exam
+              </Typography>
+              <Chip 
+                label={examDetails.status}
+                color={examDetails.status === 'active' ? 'success' : 'default'}
+                variant="outlined"
+              />
+            </div>
 
-            {examDetails.questions && (
-              <Paper sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>Questions</Typography>
-                <List>
-                  {examDetails.questions.map((q, index) => (
-                    <React.Fragment key={q.id}>
-                      <ListItem alignItems="flex-start">
-                        <Box sx={{ width: '100%' }}>
-                          <Typography variant="subtitle1" gutterBottom>
-                            {index + 1}. {q.question}
-                          </Typography>
-                          <FormControl component="fieldset">
-                            <RadioGroup>
-                              {q.options.map((option, optIndex) => (
-                                <FormControlLabel
-                                  key={optIndex}
-                                  value={option}
-                                  control={<Radio />}
-                                  label={option}
-                                />
-                              ))}
-                            </RadioGroup>
-                          </FormControl>
-                        </Box>
-                      </ListItem>
-                      {index < examDetails.questions.length - 1 && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-              </Paper>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="flex items-center space-x-2">
+                <AccessTimeIcon className="text-accent" />
+                <div>
+                  <Typography variant="body2" color="textSecondary">Date</Typography>
+                  <Typography>{new Date(examDetails.date).toLocaleDateString()}</Typography>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <AccessTimeIcon className="text-accent" />
+                <div>
+                  <Typography variant="body2" color="textSecondary">Time</Typography>
+                  <Typography>{examDetails.startTime} - {examDetails.endTime}</Typography>
+                </div>
+              </div>
+            </div>
+
+            {canRequestPaper && !examDetails.hasDecodedQuestions && (
+              <Button
+                variant="contained"
+                onClick={handleRequestPaper}
+                disabled={requesting}
+                startIcon={<QuizIcon />}
+                className="w-full mt-4 bg-primary hover:bg-accent transition-colors"
+              >
+                {requesting ? <CircularProgress size={24} /> : 'Request Paper'}
+              </Button>
             )}
-          </>
-        ) : (
-          <Alert severity="info">
+          </Paper>
+        )}
+
+        {examDetails?.questions && (
+          <Paper className="p-6 hover-card bg-white">
+            <Typography variant="h6" className="font-semibold mb-4">
+              Questions
+            </Typography>
+            <List className="space-y-4">
+              {examDetails.questions.map((q, index) => (
+                <Paper 
+                  key={q.id} 
+                  className="p-4 border border-secondary"
+                >
+                  <Typography className="font-medium mb-3">
+                    {index + 1}. {q.question}
+                  </Typography>
+                  <FormControl component="fieldset">
+                    <RadioGroup>
+                      {q.options.map((option, optIndex) => (
+                        <FormControlLabel
+                          key={optIndex}
+                          value={option}
+                          control={<Radio />}
+                          label={option}
+                          className="text-textcolor"
+                        />
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                </Paper>
+              ))}
+            </List>
+          </Paper>
+        )}
+
+        {!examDetails && (
+          <Alert 
+            severity="info"
+            className="bg-secondary/20 border border-primary/20"
+          >
             There are no active exams at the moment.
           </Alert>
         )}

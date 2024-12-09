@@ -6,8 +6,11 @@ import {
   TextField,
   Button,
   Alert,
-  CircularProgress
+  CircularProgress,
+  Chip
 } from '@mui/material';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SecurityIcon from '@mui/icons-material/Security';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
 import { examService } from '../../../services/examService';
 
@@ -69,57 +72,103 @@ export default function GuardianDashboard() {
 
   return (
     <DashboardLayout>
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          Guardian Dashboard
-        </Typography>
+      <Box className="p-6 space-y-8">
+        <div className="flex items-center justify-between mb-8">
+          <Typography variant="h4" className="gradient-text font-bold">
+            Guardian Dashboard
+          </Typography>
+          <SecurityIcon className="text-primary" sx={{ fontSize: 40 }} />
+        </div>
 
-        {examDetails&& (
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>Current Exam</Typography>
-            <Typography>Date: {new Date(examDetails.date).toLocaleDateString()}</Typography>
-            <Typography>Time: {examDetails.startTime} - {examDetails.endTime}</Typography>
-            <Typography>Status: {examDetails.status}</Typography>
+        {examDetails && (
+          <Paper className="p-6 hover-card bg-secondary">
+            <div className="flex items-center justify-between mb-4">
+              <Typography variant="h6" className="font-semibold text-primary">
+                Current Exam Details
+              </Typography>
+              <Chip 
+                label={examDetails.status}
+                color={examDetails.status === 'active' ? 'success' : 'default'}
+                variant="outlined"
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="flex items-center space-x-2">
+                <AccessTimeIcon className="text-accent" />
+                <div>
+                  <Typography variant="body2" color="textSecondary">Date</Typography>
+                  <Typography>{new Date(examDetails.date).toLocaleDateString()}</Typography>
+                </div>
+              </div>
+              <div className="flex items-center space-x-2">
+                <AccessTimeIcon className="text-accent" />
+                <div>
+                  <Typography variant="body2" color="textSecondary">Time</Typography>
+                  <Typography>{examDetails.startTime} - {examDetails.endTime}</Typography>
+                </div>
+              </div>
+            </div>
+
+            <Alert 
+              severity="info"
+              className="bg-secondary/20 border border-primary/20"
+            >
+              Ensure you have the correct key to submit for this exam.
+            </Alert>
           </Paper>
         )}
 
         {examDetails && !hasSubmitted && (
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>Submit Key</Typography>
+          <Paper className="p-6 hover-card bg-secondary">
+            <Typography variant="h6" className="font-semibold mb-4 text-primary">
+              Submit Key
+            </Typography>
+            
             {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
+              <Alert severity="error" className="mb-4">
                 {error}
               </Alert>
             )}
             {success && (
-              <Alert severity="success" sx={{ mb: 2 }}>
+              <Alert severity="success" className="mb-4">
                 Key submitted successfully
               </Alert>
             )}
-            <form onSubmit={handleSubmitKey}>
+            
+            <form onSubmit={handleSubmitKey} className="space-y-4">
               <TextField
                 fullWidth
                 label="Secret Key"
                 value={key}
                 onChange={(e) => setKey(e.target.value)}
                 required
-                sx={{ mb: 2 }}
+                className="bg-secondary/10"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&:hover fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                  },
+                }}
               />
-              <Button type="submit" variant="contained">
+              <Button 
+                type="submit" 
+                variant="contained"
+                fullWidth
+                className="bg-primary hover:bg-accent transition-colors"
+              >
                 Submit Key
               </Button>
             </form>
           </Paper>
         )}
 
-        {hasSubmitted && (
-          <Alert severity="success">
-            You have already submitted your key for this exam.
-          </Alert>
-        )}
-
         {!examDetails && (
-          <Alert severity="info">
+          <Alert 
+            severity="info"
+            className="bg-secondary/20 border border-primary/20"
+          >
             There are no active exams at the moment.
           </Alert>
         )}
