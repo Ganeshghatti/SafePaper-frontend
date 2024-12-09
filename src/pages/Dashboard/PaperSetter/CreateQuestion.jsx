@@ -165,7 +165,7 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
   }
 
   return (
-    <Paper className="p-8 bg-secondary/10">
+    <Paper className="p-4 md:p-8 bg-secondary/10">
       <div className="mb-8">
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map((label) => (
@@ -209,7 +209,7 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
                 >
                   <div className="flex items-center justify-between w-full pr-4">
                     <Typography className="font-medium flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary text-sm md:text-base">
                         {index + 1}
                       </span>
                       {q.question || "New Question"}
@@ -326,7 +326,6 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
               </Typography>
             </div>
 
-            <Paper className="p-6 bg-white">
               <Autocomplete
                 multiple
                 options={guardians}
@@ -358,7 +357,6 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
                   ))
                 }
               />
-            </Paper>
           </div>
         )}
 
@@ -369,7 +367,6 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
               Review Your Submission
             </Typography>
 
-            <Paper className="p-6 bg-white">
               <div className="space-y-6">
                 <div>
                   <Typography variant="subtitle1" className="font-medium mb-3 text-primary">
@@ -390,7 +387,7 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
                               {q.options.map((opt, i) => (
                                 <div 
                                   key={i}
-                                  className={`p-2 rounded ${
+                                  className={`p-2 rounded text-xs md:text-sm ${
                                     q.correctOption === opt 
                                       ? 'bg-green-50 border border-green-200' 
                                       : 'bg-gray-50'
@@ -432,7 +429,6 @@ export default function CreateQuestion({ onSuccess, guardians = [] }) {
                   Please review all details carefully. Once submitted, questions cannot be modified.
                 </Alert>
               </div>
-            </Paper>
           </div>
         )}
 
