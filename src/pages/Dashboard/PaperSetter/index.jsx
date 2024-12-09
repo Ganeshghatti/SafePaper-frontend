@@ -90,7 +90,7 @@ export default function PaperSetterDashboard() {
                   }
                 ].map((item, index) => (
                   <div key={item.step} className="relative">
-                    <Paper className="p-6 bg-white border-l-4 border-l-accent">
+                    <Paper className="p-6 bg-secondary bg-opacity-30 border-l-4 border-l-accent">
                       <Typography variant="h6" className="font-semibold mb-2 text-primary">
                         Step {item.step}: {item.title}
                       </Typography>

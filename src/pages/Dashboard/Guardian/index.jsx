@@ -118,7 +118,7 @@ export default function GuardianDashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
+              <div className="flex items-center gap-3 bg-secondary bg-opacity-30 p-4 rounded-lg">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <AccessTimeIcon className="text-primary" />
                 </div>
@@ -132,7 +132,7 @@ export default function GuardianDashboard() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
+              <div className="flex items-center gap-3 bg-secondary bg-opacity-30 p-4 rounded-lg">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <AccessTimeIcon className="text-primary" />
                 </div>
@@ -148,7 +148,7 @@ export default function GuardianDashboard() {
             </div>
 
             {!hasSubmitted ? (
-              <div className="md:p-6 bg-white">
+              <div className="md:p-6 bg-secondary bg-opacity-30">
                 <Typography
                   variant="h6"
                   className="font-semibold mb-4 text-primary flex items-center gap-2"
@@ -188,7 +188,7 @@ export default function GuardianDashboard() {
                     type="submit"
                     variant="contained"
                     fullWidth
-                    className="bg-primary hover:bg-accent transition-all transform hover:scale-105"
+                    className="bg-primary hover:bg-accent transition-all transform"
                     startIcon={
                       requesting ? <CircularProgress size={20} /> : <LockIcon />
                     }
@@ -221,7 +221,7 @@ export default function GuardianDashboard() {
               Your Responsibilities
             </Typography>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-              <Paper className="p-6 bg-white border-l-4 border-l-accent hover:shadow-lg transition-shadow">
+              <Paper className="p-6 bg-secondary bg-opacity-30 border-l-4 border-l-accent hover:shadow-lg transition-shadow">
                 <LockIcon className="text-primary mb-4" sx={{ fontSize: 32 }} />
                 <Typography
                   variant="h6"
@@ -234,7 +234,7 @@ export default function GuardianDashboard() {
                 </Typography>
               </Paper>
 
-              <Paper className="p-6 bg-white border-l-4 border-l-accent hover:shadow-lg transition-shadow">
+              <Paper className="p-6 bg-secondary bg-opacity-30 border-l-4 border-l-accent hover:shadow-lg transition-shadow">
                 <AccessTimeIcon
                   className="text-primary mb-4"
                   sx={{ fontSize: 32 }}
@@ -250,7 +250,7 @@ export default function GuardianDashboard() {
                 </Typography>
               </Paper>
 
-              <Paper className="p-6 bg-white border-l-4 border-l-accent hover:shadow-lg transition-shadow">
+              <Paper className="p-6 bg-secondary bg-opacity-30 border-l-4 border-l-accent hover:shadow-lg transition-shadow">
                 <SecurityIcon
                   className="text-primary mb-4"
                   sx={{ fontSize: 32 }}

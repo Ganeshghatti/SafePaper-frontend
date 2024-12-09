@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Countdown from 'react-countdown';
 import {
   Box,
   Typography,
@@ -7,18 +8,13 @@ import {
   Alert,
   CircularProgress,
   Chip,
-  List,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
 } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import SchoolIcon from '@mui/icons-material/School';
 import InfoIcon from '@mui/icons-material/Info';
 import QuizIcon from '@mui/icons-material/Quiz';
 import TimerIcon from '@mui/icons-material/Timer';
-import WarningIcon from '@mui/icons-material/Warning';
+import DownloadIcon from '@mui/icons-material/Download';
 import { jsPDF } from 'jspdf';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
 import { examService } from '../../../services/examService';
@@ -27,45 +23,27 @@ export default function ExamCenterDashboard() {
   const [loading, setLoading] = useState(true);
   const [examDetails, setExamDetails] = useState(null);
   const [error, setError] = useState(null);
+  const [examTime, setExamTime] = useState(null);
   const [canRequestPaper, setCanRequestPaper] = useState(false);
-  const [timeLeft, setTimeLeft] = useState('');
+  const [requesting, setRequesting] = useState(false);
 
   useEffect(() => {
     checkExamDetails();
-    const interval = setInterval(checkExamTime, 1000); // Check every second for smoother countdown
-    return () => clearInterval(interval);
   }, []);
 
-  const checkExamTime = () => {
-    if (!examDetails) return;
-
-    const now = new Date();
-    const examDate = new Date(examDetails.date);
-    const [hours, minutes] = examDetails.startTime.split(':');
-    examDate.setHours(parseInt(hours), parseInt(minutes));
-    const timeDiffMinutes = (examDate - now) / (1000 * 60);
-
-    const canRequest = timeDiffMinutes <= 5 && timeDiffMinutes > 0;
-    setCanRequestPaper(canRequest);
-
-    // Calculate time left to request
-    if (timeDiffMinutes > 5) {
-      const minutesToRequest = Math.floor(timeDiffMinutes - 5);
-      const secondsToRequest = Math.floor(((timeDiffMinutes - 5) % 1) * 60);
-      setTimeLeft(`${minutesToRequest}m ${secondsToRequest}s until paper can be requested`);
-    } else if (timeDiffMinutes > 0) {
-      const secondsLeft = Math.floor(timeDiffMinutes * 60);
-      setTimeLeft(`${secondsLeft}s remaining for exam`);
-    } else {
-      setTimeLeft('Paper request time has expired');
+  useEffect(() => {
+    if (examDetails) {
+      const examDate = new Date(examDetails.date);
+      const [hours, minutes] = examDetails.startTime.split(':');
+      examDate.setHours(parseInt(hours), parseInt(minutes));
+      setExamTime(examDate.getTime());
     }
-  };
+  }, [examDetails]);
 
   const checkExamDetails = async () => {
     try {
       setLoading(true);
       const response = await examService.getExamCenterDetails();
-      console.log(response);
       setExamDetails(response.examDetails);
     } catch (err) {
       setError(err.message || 'Failed to fetch exam details');
@@ -74,14 +52,254 @@ export default function ExamCenterDashboard() {
     }
   };
 
+  const handleRequestPaper = async () => {
+    try {
+      setRequesting(true);
+      const response = await examService.requestPaper();
+      setExamDetails(response.examDetails);
+      checkExamDetails();
+    } catch (err) {
+      setError(err.message || 'Failed to request paper');
+    } finally {
+      setRequesting(false);
+    }
+  };
+
   const downloadPDF = () => {
     const doc = new jsPDF();
-    doc.setFont('Poppins');
-    doc.text('Exam Questions', 20, 20);
-    examDetails.questions.forEach((q, index) => {
-      doc.text(`${index + 1}. ${q.question}`, 20, 30 + index * 10);
+    
+    // Add exam logo or header
+    doc.setFillColor(52, 152, 219); // A nice blue color
+    doc.rect(0, 0, doc.internal.pageSize.width, 40, 'F');
+    
+    // Title
+    doc.setFont('Poppins', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.text('SafePaper Exams', 20, 25);
+    
+    // Reset text color for rest of the content
+    doc.setTextColor(0, 0, 0);
+    
+    // Exam Details Section
+    let yPosition = 60;
+    
+    // Add a subtle background for exam details
+    doc.setFillColor(240, 240, 240);
+    doc.rect(15, 45, doc.internal.pageSize.width - 30, 45, 'F');
+    
+    // Exam Details
+    doc.setFont('Poppins', 'bold');
+    doc.setFontSize(12);
+    doc.text('Exam Details:', 20, yPosition);
+    
+    doc.setFont('Poppins', 'normal');
+    doc.setFontSize(10);
+    const examDate = new Date(examDetails.date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
     });
+    
+    // Create two columns for exam details
+    const leftColumn = [
+      `Date: ${examDate}`,
+      `Start Time: ${examDetails.startTime}`,
+      `End Time: ${examDetails.endTime}`
+    ];
+    
+    const rightColumn = [
+      `Duration: ${examDetails.duration || '3 hours'}`,
+      `Total Questions: ${examDetails.questions.length}`,
+      `Total Marks: ${examDetails.totalMarks || examDetails.questions.length * 4}`
+    ];
+    
+    // Print left column
+    yPosition += 8;
+    leftColumn.forEach(text => {
+      doc.text(text, 20, yPosition);
+      yPosition += 7;
+    });
+    
+    // Print right column
+    yPosition = 68;
+    rightColumn.forEach(text => {
+      doc.text(text, doc.internal.pageSize.width / 2, yPosition);
+      yPosition += 7;
+    });
+    
+    // Instructions
+    yPosition = 100;
+    doc.setFont('Poppins', 'bold');
+    doc.setFontSize(12);
+    doc.text('Instructions:', 20, yPosition);
+    
+    doc.setFont('Poppins', 'normal');
+    doc.setFontSize(10);
+    yPosition += 8;
+    const instructions = [
+      '1. All questions are compulsory.',
+      '2. Each question carries equal marks.',
+      '3. Choose the most appropriate option.',
+      '4. There is no negative marking.',
+      '5. Time duration must be strictly followed.'
+    ];
+    
+    instructions.forEach(instruction => {
+      doc.text(instruction, 20, yPosition);
+      yPosition += 7;
+    });
+    
+    // Add a line before questions begin
+    yPosition += 5;
+    doc.setDrawColor(52, 152, 219);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPosition, doc.internal.pageSize.width - 20, yPosition);
+    
+    // Questions Section
+    yPosition += 15;
+    doc.setFont('Poppins', 'bold');
+    doc.setFontSize(14);
+    doc.text('Questions:', 20, yPosition);
+    yPosition += 10;
+    
+    // Questions and Options
+    const pageHeight = doc.internal.pageSize.height;
+    
+    examDetails.questions.forEach((q, index) => {
+      // Check if we need a new page
+      if (yPosition > pageHeight - 50) {
+        doc.addPage();
+        // Add header to new page
+        doc.setFillColor(52, 152, 219);
+        doc.rect(0, 0, doc.internal.pageSize.width, 20, 'F');
+        doc.setFont('Poppins', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(12);
+        doc.text('Exam Questions (Continued)', 20, 15);
+        doc.setTextColor(0, 0, 0);
+        yPosition = 40;
+      }
+      
+      // Question
+      doc.setFont('Poppins', 'bold');
+      doc.setFontSize(11);
+      const questionText = `${index + 1}. ${q.question}`;
+      doc.text(questionText, 20, yPosition);
+      yPosition += 10;
+      
+      // Options
+      doc.setFont('Poppins', 'normal');
+      doc.setFontSize(10);
+      q.options.forEach((opt, optIndex) => {
+        // Check if we need a new page for options
+        if (yPosition > pageHeight - 20) {
+          doc.addPage();
+          // Add header to new page
+          doc.setFillColor(52, 152, 219);
+          doc.rect(0, 0, doc.internal.pageSize.width, 20, 'F');
+          doc.setFont('Poppins', 'bold');
+          doc.setTextColor(255, 255, 255);
+          doc.setFontSize(12);
+          doc.text('Exam Questions (Continued)', 20, 15);
+          doc.setTextColor(0, 0, 0);
+          yPosition = 40;
+        }
+        const optionText = `    ${String.fromCharCode(97 + optIndex)}) ${opt}`;
+        doc.text(optionText, 20, yPosition);
+        yPosition += 7;
+      });
+      
+      yPosition += 5; // Extra space between questions
+    });
+    
+    // Add footer with page numbers
+    const pageCount = doc.internal.getNumberOfPages();
+    for(let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFont('Poppins', 'normal');
+      doc.setFontSize(8);
+      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 40, doc.internal.pageSize.height - 10);
+    }
+    
     doc.save('exam_questions.pdf');
+  };
+
+  // Countdown renderer with improved UI
+  const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
+    const isWithin5Minutes = hours === 0 && minutes < 5;
+    const hasExpired = completed;
+    
+    if (!examDetails.hasDecodedQuestions) {
+      setCanRequestPaper(isWithin5Minutes || hasExpired);
+    }
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-4 justify-center bg-secondary/20 p-6 rounded-xl shadow-sm">
+          <div className="text-center">
+            <div className="bg-primary/10 rounded-lg p-3 min-w-[80px]">
+              <Typography className="text-2xl md:text-3xl font-space-grotesk font-bold text-primary">
+                {hours.toString().padStart(2, '0')}
+              </Typography>
+              <Typography className="text-xs text-gray-600 font-poppins">
+                Hours
+              </Typography>
+            </div>
+          </div>
+          <Typography className="text-2xl font-bold text-primary">:</Typography>
+          <div className="text-center">
+            <div className="bg-primary/10 rounded-lg p-3 min-w-[80px]">
+              <Typography className="text-2xl md:text-3xl font-space-grotesk font-bold text-primary">
+                {minutes.toString().padStart(2, '0')}
+              </Typography>
+              <Typography className="text-xs text-gray-600 font-poppins">
+                Minutes
+              </Typography>
+            </div>
+          </div>
+          <Typography className="text-2xl font-bold text-primary">:</Typography>
+          <div className="text-center">
+            <div className="bg-primary/10 rounded-lg p-3 min-w-[80px]">
+              <Typography className="text-2xl md:text-3xl font-space-grotesk font-bold text-primary">
+                {seconds.toString().padStart(2, '0')}
+              </Typography>
+              <Typography className="text-xs text-gray-600 font-poppins">
+                Seconds
+              </Typography>
+            </div>
+          </div>
+        </div>
+        
+        <Alert 
+          severity={hasExpired ? "warning" : isWithin5Minutes ? "success" : "info"}
+          className={`border-2 ${
+            hasExpired 
+              ? 'border-orange-200 bg-orange-50' 
+              : isWithin5Minutes 
+                ? 'border-green-200 bg-green-50'
+                : 'border-primary/20 bg-secondary/20'
+          }`}
+          icon={
+            hasExpired 
+              ? <TimerIcon className="text-orange-500" />
+              : isWithin5Minutes 
+                ? <TimerIcon className="text-green-500" />
+                : <AccessTimeIcon className="text-accent" />
+          }
+        >
+          <Typography className="font-poppins">
+            {hasExpired 
+              ? "Exam time has passed. You can still request the paper."
+              : isWithin5Minutes 
+                ? "Questions can be requested now!"
+                : "Paper can be requested within 5 minutes before exam start time"
+            }
+          </Typography>
+        </Alert>
+      </div>
+    );
   };
 
   if (loading) {
@@ -115,100 +333,52 @@ export default function ExamCenterDashboard() {
         </div>
 
         {/* Time Status Section */}
-        {examDetails && !examDetails.hasDecodedQuestions && (
-          <Paper className="p-6 bg-secondary hover:shadow-lg transition-shadow">
-            <div className="flex items-center gap-3 mb-4">
+        {examDetails && !examDetails.hasDecodedQuestions && examTime && (
+          <Paper className="p-8 bg-secondary hover:shadow-lg transition-shadow">
+            <div className="flex items-center gap-3 mb-6 justify-center">
               <TimerIcon className="text-accent" sx={{ fontSize: 32 }} />
-              <Typography variant="h6" className="font-semibold text-primary">
+              <Typography variant="h6" className="font-space-grotesk font-semibold text-primary">
                 Time Status
               </Typography>
             </div>
             
-            <Alert 
-              severity="info"
-              className="bg-secondary/20 border-2 border-primary/20"
-              icon={<AccessTimeIcon className="text-accent" />}
-            >
-              <div className="space-y-2">
-                <Typography variant="body1">
-                  Paper can only be requested within 5 minutes before exam start time
-                </Typography>
-                <Typography 
-                  className={`font-bold ${canRequestPaper ? 'text-green-600' : 'text-gray-600'}`}
-                >
-                  {timeLeft}
-                </Typography>
-              </div>
-            </Alert>
-          </Paper>
-        )}
+            <Countdown 
+              date={examTime} 
+              renderer={countdownRenderer}
+              onComplete={() => setCanRequestPaper(true)}
+            />
 
-        {/* Exam Details Section */}
-        {examDetails && (
-          <Paper className="p-6 bg-secondary hover:shadow-lg transition-shadow">
-            <div className="flex items-center justify-between mb-6">
-              <Typography variant="h6" className="font-semibold text-primary flex items-center gap-2">
-                <QuizIcon className="text-accent" />
-                Current Exam
-              </Typography>
-              <Chip 
-                label={examDetails.status}
-                color={examDetails.status === 'active' ? 'success' : 'default'}
-                variant="outlined"
-                className="border-2"
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-                <AccessTimeIcon className="text-primary" />
-                <div>
-                  <Typography variant="body2" color="textSecondary">Date</Typography>
-                  <Typography className="font-medium">
-                    {new Date(examDetails.date).toLocaleDateString()}
-                  </Typography>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3 bg-white p-4 rounded-lg">
-                <AccessTimeIcon className="text-primary" />
-                <div>
-                  <Typography variant="body2" color="textSecondary">Time</Typography>
-                  <Typography className="font-medium">
-                    {examDetails.startTime} - {examDetails.endTime}
-                  </Typography>
-                </div>
-              </div>
-            </div>
-
-            {canRequestPaper && !examDetails.hasDecodedQuestions && (
+            {canRequestPaper && (
               <Button
                 variant="contained"
-                onClick={checkExamDetails} // Assuming this will fetch the questions
+                onClick={handleRequestPaper}
                 disabled={requesting}
                 startIcon={requesting ? <CircularProgress size={20} /> : <QuizIcon />}
-                className="w-full bg-primary hover:bg-accent transition-all transform hover:scale-105"
+                className="w-full mt-6 bg-primary hover:bg-accent transition-all transform hover:scale-105 py-3"
               >
-                {requesting ? 'Requesting Paper...' : 'Request Paper'}
+                {requesting ? 'Requesting Paper...' : 'Request Questions'}
               </Button>
             )}
           </Paper>
         )}
 
-        {/* Download Questions Button */}
-        {examDetails?.questions && (
+        {/* Download Questions Section */}
+        {examDetails?.hasDecodedQuestions && examDetails.questions && (
           <Paper className="p-6 bg-secondary hover:shadow-lg transition-shadow">
-            <Typography variant="h6" className="font-semibold mb-4 text-primary flex items-center gap-2">
-              <QuizIcon className="text-accent" />
-              Download Exam Questions
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={downloadPDF}
-              className="bg-primary hover:bg-accent transition-all transform hover:scale-105"
-            >
-              Download PDF
-            </Button>
+            <div className="flex items-center justify-between mb-4">
+              <Typography variant="h6" className="font-space-grotesk font-semibold text-primary flex items-center gap-2">
+                <QuizIcon className="text-accent" />
+                Exam Questions Available
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={downloadPDF}
+                startIcon={<DownloadIcon />}
+                className="bg-primary hover:bg-accent transition-all transform hover:scale-105"
+              >
+                Download PDF
+              </Button>
+            </div>
           </Paper>
         )}
 

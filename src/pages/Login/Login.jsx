@@ -53,7 +53,7 @@ export default function Login() {
           </div>
         </div>
         
-        <Box className="bg-white">
+        <Box className="bg-secondary bg-opacity-30">
           <Tabs
             value={activeTab}
             onChange={handleTabChange}
