@@ -8,7 +8,6 @@ export const login = async (credentials, role) => {
       credentials,
       role,
     });
-    console.log(response)
     return {
       token: response.data.token,
       user: {
