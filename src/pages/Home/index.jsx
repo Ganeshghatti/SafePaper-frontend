@@ -2,174 +2,236 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Typography, Box, Grid, Paper } from '@mui/material';
 import SecurityIcon from '@mui/icons-material/Security';
-import LockIcon from '@mui/icons-material/Lock';
-import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
-import GroupIcon from '@mui/icons-material/Group';
-import TimelineIcon from '@mui/icons-material/Timeline';
-import CloudIcon from '@mui/icons-material/Cloud';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const features = [
   {
-    icon: <LockIcon className="text-accent" sx={{ fontSize: 40 }} />,
-    title: 'AES-256 Encryption',
-    description: 'Military-grade encryption for your exam papers'
+    icon: <SecurityIcon className="text-[#9FE870]" sx={{ fontSize: 40 }} />,
+    title: 'Unbreakable Security',
+    description: 'Bank-Level AES-256 Advanced Security For Private Proctoring'
   },
   {
-    icon: <TimelineIcon className="text-accent" sx={{ fontSize: 40 }} />,
-    title: 'Blockchain Audit Logs',
-    description: 'Immutable record of all paper access and modifications'
+    icon: <SecurityIcon className="text-[#9FE870]" sx={{ fontSize: 40 }} />,
+    title: 'AI Proctoring Assistant',
+    description: 'AI-Powered Proctoring Engine To Safeguard Academic Integrity'
   },
   {
-    icon: <VerifiedUserIcon className="text-accent" sx={{ fontSize: 40 }} />,
-    title: 'Role-Based Access',
-    description: 'Granular control over who can access what'
-  },
-  {
-    icon: <GroupIcon className="text-accent" sx={{ fontSize: 40 }} />,
-    title: 'Guardian System',
-    description: 'Multi-party key reconstruction for enhanced security'
-  },
-  {
-    icon: <CloudIcon className="text-accent" sx={{ fontSize: 40 }} />,
-    title: 'Secure Cloud Storage',
-    description: 'Encrypted storage with redundant backups'
-  },
-  {
-    icon: <SecurityIcon className="text-accent" sx={{ fontSize: 40 }} />,
-    title: 'Advanced Security',
-    description: 'TLS encryption and SHA-256 hashing'
+    icon: <SecurityIcon className="text-[#9FE870]" sx={{ fontSize: 40 }} />,
+    title: 'Post-Exam Scrutiny',
+    description: 'AI-Based Auto Video Roll To Ensure Academic Integrity'
   }
 ];
 
-const steps = [
+const benefits = [
   {
-    title: 'Encrypt & Store',
-    description: 'Admin securely encrypts exam papers and stores them in the cloud'
+    title: "For a Student",
+    items: [
+      "Establish Academic Integrity",
+      "Revolutionize Exam Delivery",
+      "Gain Valuable Insights"
+    ]
   },
   {
-    title: 'Distribute Keys',
-    description: 'Encryption keys are split and distributed to trusted guardians'
-  },
-  {
-    title: 'Secure Access',
-    description: 'Paper access requires multiple guardian approvals'
+    title: "For a Business",
+    items: [
+      "Streamline Operations",
+      "Enhance Security",
+      "Improve Efficiency"
+    ]
   }
+];
+
+const testimonials = [
+  {
+    name: "Sarah Jone",
+    role: "Professor",
+    image: "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    text: "ProctorTech has been a lifesaver for my online exams. The AI proctoring is incredibly effective."
+  },
+  {
+    name: "Dr. David Lee",
+    role: "Dean of Engineering",
+    image: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    text: "The analytics data has been invaluable in improving our examination process."
+  },
+  {
+    name: "Maria Garcia",
+    role: "IT Director",
+    image: "https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+    text: "Excellent customer support and robust security features make this a top choice."
+  }
+];
+
+const faqs = [
+  "Is it necessary to log in to book token or access Last Minute Exam?",
+  "How are payments and refunds handled in the RemoteXY feature?",
+  "What measures are in place to ensure security and fairness in remotely handling?",
+  "Can I cancel a reasonable arrangement in hourly rental bookings?",
+  "How does the RemoteXY feature work?",
+  "Can I use the Hourly Rental Service without creating an account?",
+  "What types of spaces can I rent hourly?",
+  "How do Last Minute Deals work?"
 ];
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-primary via-accent to-primary text-white">
-        <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')] opacity-10 bg-cover bg-center" />
-        <Container maxWidth="lg" className="relative z-10">
-          <Box className="py-20 md:py-32 text-center">
-            <Typography variant="h1" className="text-4xl md:text-6xl font-bold mb-6 font-space-grotesk">
-              Secure Examination Paper Storage.
-              <span className="block">Reinvented.</span>
+    <div className="min-h-screen bg-[#1A1A1A] text-white">
+      {/* Navigation */}
+      <nav className="border-b border-gray-800">
+        <Container maxWidth="lg" className="py-4">
+          <div className="flex justify-between items-center">
+            <Typography variant="h6" className="font-bold">
+              PROCTORTECH
             </Typography>
-            <Typography variant="h2" className="text-xl md:text-2xl mb-8 opacity-90 font-poppins">
-              SafePaper protects exam integrity using Blockchain and Secret Sharing
-            </Typography>
-            <div className="flex gap-4 justify-center">
-              <Button
-                variant="contained"
-                size="large"
-                className="bg-white text-primary hover:bg-gray-100"
-                component={Link}
-                to="/login"
-              >
-                Get Started
+            <div className="flex items-center gap-4">
+              <Button component={Link} to="/login" variant="contained" className="bg-[#9FE870] text-black hover:bg-[#8AD562]">
+                Book a Demo
               </Button>
-              <Button
-                variant="outlined"
-                size="large"
-                className="border-white text-white hover:bg-white/10"
-                endIcon={<ArrowForwardIcon />}
-              >
-                Learn More
+              <Button variant="outlined" className="border-[#9FE870] text-[#9FE870]">
+                Cart 0
               </Button>
             </div>
-          </Box>
+          </div>
         </Container>
-      </div>
+      </nav>
 
-      {/* Problem & Solution */}
+      {/* Hero Section */}
       <Container maxWidth="lg" className="py-20">
-        <Grid container spacing={8} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <Typography variant="h3" className="text-3xl md:text-4xl font-bold mb-6 gradient-text font-space-grotesk">
-              Why SafePaper?
-            </Typography>
-            <Typography variant="body1" className="text-gray-600 mb-4">
-              Traditional exam paper management faces critical challenges: paper leaks, insider threats, and lack of accountability. SafePaper addresses these issues head-on with cutting-edge technology.
-            </Typography>
-            <div className="space-y-4">
-              {['AES Encryption', 'Shamir\'s Secret Sharing', 'Blockchain Logs'].map((item, index) => (
-                <div key={index} className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-accent" />
-                  <Typography>{item}</Typography>
-                </div>
-              ))}
-            </div>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl transform rotate-3" />
-              <img
-                src="https://images.pexels.com/photos/3183183/pexels-photo-3183183.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                alt="Secure Paper Management"
-                className="rounded-xl relative z-10 w-full"
-              />
-            </div>
-          </Grid>
+        <div className="text-center space-y-6">
+          <Typography variant="h1" className="text-5xl md:text-7xl font-bold">
+            PROCTOR <span className="text-[#9FE870]">EXAMS</span>
+          </Typography>
+          <Typography variant="h2" className="text-3xl md:text-5xl font-bold">
+            ANYWHERE <span className="text-[#9FE870]">ANYTIME</span>
+          </Typography>
+          <Typography variant="body1" className="text-gray-400 max-w-2xl mx-auto">
+            ProctorTech Provides Security AI-enabled Proctoring To Safeguard Exam Integrity
+          </Typography>
+          <div className="flex justify-center gap-4">
+            <Button variant="contained" className="bg-[#9FE870] text-black hover:bg-[#8AD562]">
+              Book a Demo
+            </Button>
+            <Button variant="outlined" className="border-[#9FE870] text-[#9FE870]">
+              Get Tour
+            </Button>
+          </div>
+        </div>
+      </Container>
+
+      {/* Partners */}
+      <Container maxWidth="lg" className="py-10">
+        <Grid container spacing={4} justifyContent="center" alignItems="center">
+          {['Softbank', 'Samsung', 'VISA', 'Amazon Pay', 'PayPal', 'Alipay'].map((partner) => (
+            <Grid item key={partner}>
+              <Typography variant="body2" className="text-gray-500">
+                {partner}
+              </Typography>
+            </Grid>
+          ))}
         </Grid>
       </Container>
 
-      {/* How It Works */}
-      <div className="bg-gradient-to-br from-primary/5 via-accent/5 to-primary/5 py-20">
-        <Container maxWidth="lg">
-          <Typography variant="h3" className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text font-space-grotesk">
-            How It Works
-          </Typography>
-          <Grid container spacing={4}>
-            {steps.map((step, index) => (
-              <Grid item xs={12} md={4} key={index}>
-                <Paper className="p-6 h-full hover:shadow-lg transition-shadow bg-white">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                      {index + 1}
-                    </div>
-                    <Typography variant="h6" className="font-space-grotesk font-semibold">
-                      {step.title}
-                    </Typography>
-                  </div>
-                  <Typography variant="body1" color="text.secondary">
-                    {step.description}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </div>
-
       {/* Features */}
       <Container maxWidth="lg" className="py-20">
-        <Typography variant="h3" className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text font-space-grotesk">
-          Key Features
+        <Typography variant="h3" className="text-center mb-12">
+          Secure & Streamlined Exam - Features Of - 
+          <span className="text-[#9FE870]"> Proctortech</span>
         </Typography>
         <Grid container spacing={4}>
           {features.map((feature, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Paper className="p-6 h-full hover:shadow-lg transition-shadow text-center">
-                <div className="mb-4">{feature.icon}</div>
-                <Typography variant="h6" className="mb-2 font-space-grotesk font-semibold">
+            <Grid item xs={12} md={4} key={index}>
+              <Paper className="p-6 bg-[#222222] border border-gray-800">
+                {feature.icon}
+                <Typography variant="h6" className="my-3">
                   {feature.title}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" className="text-gray-400">
                   {feature.description}
+                </Typography>
+                <Button 
+                  endIcon={<ArrowForwardIcon />}
+                  className="mt-4 text-[#9FE870]"
+                >
+                  Read More
+                </Button>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+      {/* Benefits */}
+      <Container maxWidth="lg" className="py-20">
+        <Typography variant="h3" className="text-center mb-12">
+          The <span className="text-[#9FE870]">Benefits</span> You Get!
+        </Typography>
+        <Grid container spacing={4}>
+          {benefits.map((benefit, index) => (
+            <Grid item xs={12} md={6} key={index}>
+              <Paper className="p-6 bg-[#222222] border border-gray-800">
+                <Typography variant="h6" className="mb-4">
+                  {benefit.title}
+                </Typography>
+                <ul className="space-y-2">
+                  {benefit.items.map((item, i) => (
+                    <li key={i} className="flex items-center gap-2">
+                      <span className="w-2 h-2 bg-[#9FE870] rounded-full" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+      {/* Pricing */}
+      <Container maxWidth="lg" className="py-20">
+        <Typography variant="h3" className="text-center mb-12">
+          Simple & Cool <span className="text-[#9FE870]">pricing</span> plans.
+        </Typography>
+        <Paper className="p-8 bg-[#222222] border border-gray-800 max-w-md mx-auto">
+          <Typography variant="h6" className="mb-4">
+            $129 <span className="text-sm text-gray-400">/month</span>
+          </Typography>
+          <Button 
+            variant="contained" 
+            fullWidth 
+            className="bg-[#9FE870] text-black hover:bg-[#8AD562] mb-4"
+          >
+            Try 1 month
+          </Button>
+          <Button variant="outlined" fullWidth className="border-[#9FE870] text-[#9FE870]">
+            See a Demo
+          </Button>
+        </Paper>
+      </Container>
+
+      {/* Testimonials */}
+      <Container maxWidth="lg" className="py-20">
+        <Typography variant="h3" className="text-center mb-12">
+          What Our <span className="text-[#9FE870]">Happy User</span> Says
+        </Typography>
+        <Grid container spacing={4}>
+          {testimonials.map((testimonial, index) => (
+            <Grid item xs={12} md={4} key={index}>
+              <Paper className="p-6 bg-[#222222] border border-gray-800">
+                <div className="flex items-center gap-4 mb-4">
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                  <div>
+                    <Typography variant="h6">{testimonial.name}</Typography>
+                    <Typography variant="body2" className="text-gray-400">
+                      {testimonial.role}
+                    </Typography>
+                  </div>
+                </div>
+                <Typography variant="body2" className="text-gray-300">
+                  {testimonial.text}
                 </Typography>
               </Paper>
             </Grid>
@@ -177,59 +239,74 @@ export default function Home() {
         </Grid>
       </Container>
 
-      {/* CTA Section */}
-      <div className="bg-gradient-to-r from-primary to-accent text-white py-20">
-        <Container maxWidth="lg" className="text-center">
-          <Typography variant="h3" className="text-3xl md:text-4xl font-bold mb-6 font-space-grotesk">
-            Protect your exams with SafePaper today
+      {/* FAQs */}
+      <Container maxWidth="lg" className="py-20">
+        <Typography variant="h3" className="text-center mb-12">
+          Frequently Asked <span className="text-[#9FE870]">Questions</span>
+        </Typography>
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <Paper key={index} className="p-4 bg-[#222222] border border-gray-800">
+              <Typography variant="body1">{faq}</Typography>
+            </Paper>
+          ))}
+        </div>
+      </Container>
+
+      {/* Newsletter */}
+      <Container maxWidth="lg" className="py-20">
+        <Paper className="p-8 bg-[#222222] border border-gray-800 text-center">
+          <Typography variant="h3" className="mb-6">
+            Join Our <span className="text-[#9FE870]">Newsletter</span>
           </Typography>
-          <Typography variant="h6" className="mb-8 opacity-90">
-            Join leading institutions in securing their examination process
-          </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            className="bg-white text-primary hover:bg-gray-100"
-            component={Link}
-            to="/login"
+          <Button 
+            variant="contained" 
+            className="bg-[#9FE870] text-black hover:bg-[#8AD562]"
           >
-            Get Started Now
+            Subscribe
           </Button>
-        </Container>
-      </div>
+        </Paper>
+      </Container>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className="border-t border-gray-800 py-12">
         <Container maxWidth="lg">
           <Grid container spacing={4}>
             <Grid item xs={12} md={4}>
-              <Typography variant="h6" className="mb-4 font-space-grotesk">
-                SafePaper
+              <Typography variant="h6" className="mb-4">
+                PROCTORTECH
               </Typography>
-              <Typography variant="body2" className="opacity-75">
-                Secure examination paper management system powered by blockchain technology
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={4}>
-              <Typography variant="h6" className="mb-4 font-space-grotesk">
-                Contact
-              </Typography>
-              <Typography variant="body2" className="opacity-75">
-                Email: safepaper@squirrel.in
+              <Typography variant="body2" className="text-gray-400">
+                AI-powered secure exam proctoring for the highest integrity
               </Typography>
             </Grid>
-            <Grid item xs={12} md={4}>
-              <Typography variant="h6" className="mb-4 font-space-grotesk">
-                Legal
-              </Typography>
-              <div className="space-y-2">
-                <Typography variant="body2" className="opacity-75 hover:opacity-100 cursor-pointer">
-                  Terms of Service
-                </Typography>
-                <Typography variant="body2" className="opacity-75 hover:opacity-100 cursor-pointer">
-                  Privacy Policy
-                </Typography>
-              </div>
+            <Grid item xs={12} md={8}>
+              <Grid container spacing={4}>
+                <Grid item xs={6} md={3}>
+                  <Typography variant="h6" className="mb-4">Product</Typography>
+                  <div className="space-y-2 text-gray-400">
+                    <Typography variant="body2">How it work</Typography>
+                    <Typography variant="body2">Features</Typography>
+                    <Typography variant="body2">Pricing</Typography>
+                  </div>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Typography variant="h6" className="mb-4">Company</Typography>
+                  <div className="space-y-2 text-gray-400">
+                    <Typography variant="body2">About Us</Typography>
+                    <Typography variant="body2">Blog</Typography>
+                    <Typography variant="body2">Contact</Typography>
+                  </div>
+                </Grid>
+                <Grid item xs={6} md={3}>
+                  <Typography variant="h6" className="mb-4">Utility</Typography>
+                  <div className="space-y-2 text-gray-400">
+                    <Typography variant="body2">Style Guide</Typography>
+                    <Typography variant="body2">Changelog</Typography>
+                    <Typography variant="body2">License</Typography>
+                  </div>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </Container>
