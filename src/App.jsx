@@ -1,6 +1,7 @@
 import { Provider } from 'react-redux';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { store } from './store/store';
+import Home from './pages/Home';
 import Login from './pages/Login/Login';
 import PrivateRoute from './components/PrivateRoute';
 import PaperSetterDashboard from './pages/Dashboard/PaperSetter';
@@ -14,7 +15,8 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Paper Setter Routes */}
